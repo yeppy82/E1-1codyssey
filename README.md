@@ -32,3 +32,35 @@ E1-1codyssey/
 -  GitHub 연동 완료
 -  웹 서버 구현 (예정)
   ## 터미널 조작 실습
+1. 환경 확인 단계 진
+
+- [ ] Windows에서 WSL2 Ubuntu가 실행되는지 확인한다.
+- [ ] 현재 사용 중인 리눅스 배포판이 Ubuntu인지 확인한다.
+- [ ] Shell 종류를 확인한다.
+- [ ] 터미널 프로그램을 확인한다. 예: Windows Terminal, VSCode Terminal.
+- [ ] Git이 설치되어 있는지 확인한다.
+- [ ] Docker가 WSL2에서 동작하는지 확인한다.
+- [ ] Docker 데몬이 정상 실행 중인지 확인한다.
+- [ ] 확인 결과를 README의 “실행 환경” 섹션에 기록한다.
+  ## 실행 환경
+
+### 시스템 정보
+- **OS**: Windows (WSL2)
+- **Linux 배포판**: Ubuntu 26.04.1 LTS (Codename: resolve)
+- **Shell**: /bin/bash
+- **Terminal**: Windows Terminal / PowerShell
+
+### 개발 도구
+- **Git**: ✅ 설치됨
+- **Docker**: ✅ 29.9.3 (build 5457199)
+- **Docker Desktop**: ✅ 실행 중 (RAM 2.21GB 할당)
+
+### 확인 날짜
+- 2026-03-01
+
+### 확인 명령어
+```bash
+lsb_release -a          # Ubuntu 26.04.1 LTS
+echo $SHELL             # /bin/bash
+docker --version        # Docker version 29.9.3
+docker ps               # ✅ 정상 연결
