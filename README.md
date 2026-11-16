@@ -1,39 +1,3 @@
-<<<<<<< HEAD
-# E1-1codyssey
-
-## 📌 프로젝트 소개
-codyssey1-1 과제를 위한 웹 서버 프로젝트입니다.
-## 💻 실행 환경
-- OS: Windows 10/11
-- Shell: PowerShell / WSL(Ubuntu)
-- Python: 3.14
-- Git: 2.55.0.windows .3
-
-## ⚙️ 환경 설치
-1. Git 설치
-   - https://git-scm.com 에서 다운로드 후 설치
-
-2. Python 설치
-   - https://python.org 에서 다운로드 후 설치
-
-3. 저장소 클론
-4. Git 사용자 정보 설정
-## 📁 폴더 구조
-E1-1codyssey/
-├── src/          # 소스 코드
-├── logs/         # 로그 파일
-├── screenshots/  # 스크린샷
-└── README.md     # 프로젝트 설명
-
-## ✅ 진행 현황
--  GitHub 저장소 생성
--  폴더 구조 생성 (src, logs, screenshots)
--  README.md 작성
--  학교/집 컴퓨터 Git 환경 설정
--  GitHub 연동 완료
--  웹 서버 구현 (예정)
-  ## 터미널 조작 실습
-=======
 # E1-1codyssey
 
 ## 📌 프로젝트 소개
@@ -70,12 +34,12 @@ E1-1codyssey/
   ## 터미널 조작 실습
 1. 환경 확인 단계 진
 
-- [ ] Windows에서 WSL2 Ubuntu가 실행되는지 확인한다.
-- [ ] 현재 사용 중인 리눅스 배포판이 Ubuntu인지 확인한다.
-- [ ] Shell 종류를 확인한다.
-- [ ] 터미널 프로그램을 확인한다. 예: Windows Terminal, VSCode Terminal.
-- [ ] Git이 설치되어 있는지 확인한다.
-- [ ] Docker가 WSL2에서 동작하는지 확인한다.
+- [x]Windows에서 WSL2 Ubuntu가 실행되는지 확인한다.
+- [X] 현재 사용 중인 리눅스 배포판이 Ubuntu인지 확인한다.
+- [X] Shell 종류를 확인한다.
+- [X] 터미널 프로그램을 확인한다. 예: Windows Terminal, VSCode Terminal.
+- [X] Git이 설치되어 있는지 확인한다.
+- [X] Docker가 WSL2에서 동작하는지 확인한다.
 - [ ] Docker 데몬이 정상 실행 중인지 확인한다.
 - [ ] 확인 결과를 README의 “실행 환경” 섹션에 기록한다.
   ## 실행 환경
@@ -91,13 +55,37 @@ E1-1codyssey/
 - **Docker**: ✅ 29.9.3 (build 5457199)
 - **Docker Desktop**: ✅ 실행 중 (RAM 2.21GB 할당)
 
-### 확인 날짜
-- 2026-03-01
-
 ### 확인 명령어
 ```bash
 lsb_release -a          # Ubuntu 26.04.1 LTS
 echo $SHELL             # /bin/bash
 docker --version        # Docker version 29.9.3
 docker ps               # ✅ 정상 연결
->>>>>>> ececfefbafdc47bf1018afdac61a8a6bc4ee914a
+
+####  Git 병합 충돌 해결
+- **상황**: 로컬과 GitHub에서 동시에 README.md 수정
+- **원인**: 협업 환경에서 같은 파일을 두 곳에서 수정
+- **해결 방법**:
+  1. VS Code에서 충돌 부분 확인
+  2. 중복 내용 정리 및 수동 병합
+  3. `git add README.md` 실행
+  4. `git commit -m "fix: README.md 병합 충돌 해결"` 커밋
+  5. `git push origin main` 푸시
+- **결과**: ✅ 로컬-GitHub 동기화 완료
+
+####  학습 내용
+- Git 충돌은 협업의 자연스러운 현상
+- 충돌 해결은 **로컬에서 먼저** 수행 후 커밋-푸시 순서 필수
+- 향후 예방: 한 곳에서만 수정하거나 순서 지키기
+
+---
+
+### ✅ 환경 설정 체크리스트
+- [x] Windows에서 WSL2 Ubuntu 설정 확인
+- [x] 현재 사용 중인 리눅스 배포판이 Ubuntu 확인
+- [x] Git 설치 및 버전 확인
+- [x] Python 설치 및 버전 확인
+- [x] Docker 설치 및 실행 확인
+- [x] GitHub 저장소 생성 및 연동
+- [x] README.md 작성
+- [x] Git 병합 충돌 해결
