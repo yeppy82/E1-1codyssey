@@ -89,3 +89,59 @@ docker ps               # ✅ 정상 연결
 - [x] GitHub 저장소 생성 및 연동
 - [x] README.md 작성
 - [x] Git 병합 충돌 해결
+####터미널 기본 조작 실습
+#### 1️⃣ 현재 위치 확인 (pwd)
+```bash
+$ pwd
+Path
+----
+C:\Users\yeppy829155\Desktop\E1-1codyssey
+2️⃣ 일반 파일 목록 확인 (ls)
+$ ls
+디렉터리: C:\Users\yeppy829155\Desktop\E1-1codyssey
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----  2026-11-16  오후 7:30                   docs
+d-----  2026-11-15  오후 3:43                   logs
+d-----  2026-11-15  오후 3:43                   src
+-a----  2026-11-16  오후 8:20              2999 README.md
+#### 3️⃣ 숨김 파일 포함 목록 확인 (ls -Hidden)
+```bash
+$ ls -Hidden
+
+디렉터리: C:\Users\yeppy829155\Desktop\E1-1codyssey
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d--h--  2026-11-16  오후 8:24                   .git
+#### 4️⃣ src 폴더로 이동 (cd src)
+```bash
+$ cd src
+$ pwd
+C:\Users\yeppy829155\Desktop\E1-1codyssey\src
+#### 5️⃣ 파일 생성 (New-Item hello.txt -ItemType File)
+```bash
+$ New-Item hello.txt -ItemType File
+
+디렉터리: C:\Users\yeppy829155\Desktop\E1-1codyssey\src
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----  2026-11-16  오후 8:46                0 hello.txt
+#### 5️⃣ 파일 생성 및 확인 (New-Item & ls)
+
+**파일 생성:**
+```bash
+$ New-Item hello.txt -ItemType File
+### 6️⃣ 파일에 내용 작성 (echo & 리다이렉션)
+
+**파일에 텍스트 작성:**
+```bash
+$ echo "Hello, WSL2!" > hello.txt
+### 7️⃣ 파일 내용 확인 (cat)
+
+**파일 내용 출력:**
+```bash
+$ cat hello.txt
+Hello, WSL2!
