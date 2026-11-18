@@ -345,3 +345,148 @@ Docker 이미지를 이용하여 Ubuntu 컨테이너를 생성하고 내부 환�
 또한 Nginx 웹 서버를 Docker 컨테이너로 실행하고 포트 연결을 설정하여 웹 브라우저에서 정상적으로 접속되는 것을 확인하였다.
 
 이번 실습을 통해 Docker 이미지와 컨테이너의 차이, 컨테이너의 생성 및 실행, 종료, 재실행 과정과 기본적인 웹 서버 실행 방법을 익혔다.
+## 10. Linux 터미널 기본 조작 실습
+
+### 10-1. 실습 목적
+
+Linux 터미널을 이용하여 디렉토리 및 파일의 생성, 복사, 이동, 이름 변경, 삭제와 파일 내용 확인 등의 기본 명령어를 학습하였다.
+
+### 10-2. 수행 명령어
+
+| 명령어 | 기능 |
+|---|---|
+| `pwd` | 현재 작업 위치 확인 |
+| `ls -la` | 숨김 파일을 포함한 목록 확인 |
+| `mkdir` | 디렉토리 생성 |
+| `touch` | 빈 파일 생성 |
+| `echo` | 텍스트 입력 및 파일 저장 |
+| `cat` | 파일 내용 확인 |
+| `cp` | 파일 복사 |
+| `mv` | 파일 이동 및 이름 변경 |
+| `rm` | 파일 삭제 |
+| `rmdir` | 빈 디렉토리 삭제 |
+
+### 10-3. 실습 결과
+
+- `original.txt` 파일 생성 및 내용 작성
+- `copy.txt` 파일 복사 후 `renamed.txt`로 이름 변경
+- `backup` 디렉토리 생성 및 파일 이동
+- 파일 삭제 및 빈 디렉토리 삭제
+- `ls -la`를 이용한 최종 디렉토리 상태 확인
+
+### 10-4. Linux 파일 및 디렉토리 권한 실습
+
+Linux의 권한은 읽기(r), 쓰기(w), 실행(x)으로 구성되며 숫자로 표현할 수 있다.
+
+| 권한 | 의미 | 숫자 |
+|---|---|---|
+| r | 읽기 | 4 |
+| w | 쓰기 | 2 |
+| x | 실행 | 1 |
+
+**파일 권한 변경**
+
+```bash
+ls -l original.txt
+chmod 600 original.txt
+ls -l original.txt
+```
+
+변경 전: `644` (`-rw-r--r--`)
+
+변경 후: `600` (`-rw-------`)
+
+**디렉토리 권한 변경**
+
+```bash
+mkdir practice-dir
+ls -ld practice-dir
+chmod 700 practice-dir
+ls -ld practice-dir
+```
+
+변경 전: `755` (`drwxr-xr-x`)
+
+변경 후: `700` (`drwx------`)
+
+### 10-5. 트러블슈팅
+
+**문제 1. 파일 삭제 시 No such file or directory 오류**
+
+- 원인: 삭제하려는 파일이 현재 디렉토리가 아닌 backup 디렉토리에 위치함
+- 확인: `ls -l`, `ls -l backup/`
+- 해결: `rm backup/renamed.txt` 명령으로 정확한 경로 지정
+
+**문제 2. Git diff --check에서 줄바꿈 관련 공백 오류 발생**
+
+- 원인: Windows 환경에서 작성한 README 파일의 CRLF 줄바꿈 형식
+- 해결: `git config core.whitespace cr-at-eol` 설정 후 재검사
+
+### 10-6. 학습 내용
+
+Linux 터미널을 활용하여 파일과 디렉토리를 직접 관리하는 방법을 익혔다. 또한 파일과 디렉토리의 권한 구조를 이해하고 `chmod` 명령어를 통해 접근 권한을 변경하는 방법을 학습하였다.## 📸 터미널 및 파일 권한 실습 증거
+
+### 1. 터미널 기본 명령어 실습
+
+프로젝트 내부에 실습 디렉터리를 생성하고 파일 생성, 내용 확인, 복사, 이름 변경, 이동 및 삭제 작업을 수행하였다.
+
+사용 명령어:
+```bash
+pwd
+ls -la
+mkdir
+touch
+echo
+cat
+cp
+mv
+rm
+rmdir
+```
+
+**실습 결과**
+
+![터미널 기본 명령어 실습](docs/screenshots/terminal-01.png)
+
+*그림 1. 디렉터리 및 파일 생성, 복사, 이름 변경과 내용 확인*
+
+![파일 이동 및 삭제 실습](docs/screenshots/terminal-02.png)
+
+*그림 2. 파일 이동, 삭제 및 디렉터리 정리 결과*
+
+### 2. 파일 권한 변경 실습
+
+`ls -l` 명령으로 파일의 기존 권한을 확인한 후 `chmod 600` 명령으로 권한을 변경하였다.
+
+```bash
+ls -l original.txt
+chmod 600 original.txt
+ls -l original.txt
+```
+
+변경 결과:
+- 변경 전: `-rw-r--r--` (644)
+- 변경 후: `-rw-------` (600)
+
+![파일 권한 변경](docs/screenshots/permission-01.png)
+
+*그림 3. 파일 권한 변경 전후 비교*
+
+### 3. 디렉터리 권한 변경 실습
+
+디렉터리를 생성하고 `chmod 700` 명령으로 소유자에게만 읽기, 쓰기, 실행 권한을 부여하였다.
+
+```bash
+mkdir practice-dir
+ls -ld practice-dir
+chmod 700 practice-dir
+ls -ld practice-dir
+```
+
+변경 결과:
+- 변경 전: `drwxr-xr-x` (755)
+- 변경 후: `drwx------` (700)
+
+![디렉터리 권한 변경](docs/screenshots/permission-02.png)
+
+*그림 4. 디렉터리 권한 변경 전후 비교*
