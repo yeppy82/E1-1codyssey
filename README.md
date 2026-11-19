@@ -490,3 +490,234 @@ ls -ld practice-dir
 ![디렉터리 권한 변경](docs/screenshots/permission-02.png)
 
 *그림 4. 디렉터리 권한 변경 전후 비교*
+## 11. Dockerfile 기반 사용자 정의 웹 서버 제작
+
+### 11-1. 실습 목적
+
+Dockerfile을 직접 작성하여 사용자 정의 Docker 이미지를 생성하고, Nginx 웹 서버 컨테이너를 실행하였다. 이후 포트 매핑을 통해 웹 브라우저에서 직접 제작한 웹페이지에 접속하였다.
+
+### 11-2. 프로젝트 구조
+
+```text
+src/
+└── docker-web/
+    ├── Dockerfile
+    └── index.html
+```
+
+### 11-3. HTML 웹페이지 작성
+
+`index.html` 파일을 작성하여 웹 서버에서 제공할 페이지를 제작하였다.
+
+주요 내용:
+- My Docker Web Server
+- 나만의 첫 번째 Docker 웹 서버입니다.
+- Ubuntu + Docker + Nginx
+- Built with curiosity!
+
+### 11-4. Dockerfile 작성
+
+```dockerfile
+FROM nginx:latest
+
+COPY index.html /usr/share/nginx/html/index.html
+
+EXPOSE 80
+```
+
+| 명령어 | 기능 |
+|---|---|
+| FROM | Nginx 기반 이미지 지정 |
+| COPY | HTML 파일을 컨테이너 내부로 복사 |
+| EXPOSE | 컨테이너에서 사용할 포트 표시 |
+
+### 11-5. Docker 이미지 빌드
+
+```bash
+docker build -t my-web-server .
+```
+
+실행 결과:
+- Nginx 기반 이미지 생성
+- index.html 파일 복사
+- my-web-server 이미지 빌드 성공
+
+### 11-6. 컨테이너 실행 및 포트 매핑
+
+```bash
+docker run -d -p 8080:80 --name my-web my-web-server
+```
+
+실행 결과:
+- 컨테이너 이름: my-web
+- 호스트 포트: 8080
+- 컨테이너 포트: 80
+- 컨테이너 실행 상태: Up
+
+브라우저 접속 주소:
+
+http://localhost:8080
+
+직접 제작한 웹페이지가 정상적으로 표시되는 것을 확인하였다.
+
+### 11-7. Docker 로그 및 자원 사용량 확인
+
+```bash
+docker logs my-web
+docker stats --no-stream my-web
+```
+
+실행 결과:
+- Nginx 서버 시작 로그 확인
+- HTTP 요청 성공 로그 확인
+- CPU 및 메모리 사용량 확인
+
+### 11-8. 실습 증거 자료
+
+![Docker 환경 확인](docs/screenshots/docker-01-environment.png)
+
+![Docker 프로젝트 폴더](docs/screenshots/docker-02-project.png)
+
+![HTML 파일 작성](docs/screenshots/docker-03-html.png)
+
+![Dockerfile 작성](docs/screenshots/docker-04-dockerfile.png)
+
+![Docker 이미지 빌드](docs/screenshots/docker-05-build.png)
+
+![Docker 컨테이너 실행](docs/screenshots/docker-06-container.png)
+
+![웹 브라우저 접속](docs/screenshots/docker-07-browser.png)
+
+![Docker 로그 확인](docs/screenshots/docker-08-logs.png)
+
+![Docker 자원 사용량 확인](docs/screenshots/docker-09-stats.png)
+
+## 12. Bind Mount 실습
+
+### 12-1. 실습 목적
+
+호스트 컴퓨터의 파일과 컨테이너 내부 파일을 연결하여 호스트에서 수정한 내용이 컨테이너에 반영되는 것을 확인하였다.
+
+### 12-2. Bind Mount 실행
+
+```bash
+docker run -d -p 8080:80 --name my-web \
+-v "$(pwd)/index.html:/usr/share/nginx/html/index.html" \
+nginx:latest
+```
+
+### 12-3. 파일 변경 테스트
+
+호스트 컴퓨터의 `index.html` 파일 내용을 다음과 같이 변경하였다.
+
+```html
+<p>Bind Mount 연결 테스트 성공!</p>
+```
+
+파일 저장 후 브라우저에서 변경된 문구가 표시되는 것을 확인하였다.
+
+실행 결과:
+- 호스트 파일과 컨테이너 파일 연결 성공
+- Docker 이미지 재빌드 없이 변경 사항 반영
+- 브라우저에서 수정 결과 확인
+
+### 12-4. 실습 증거 자료
+
+![Bind Mount 컨테이너 실행](docs/screenshots/docker-10-bind-mount.png)
+
+![Bind Mount 변경 결과](docs/screenshots/docker-11-bind-mount-result.png)
+
+## 13. Docker Volume 데이터 영속성 실습
+
+### 13-1. 실습 목적
+
+Docker Volume을 생성하고 데이터를 저장한 후 컨테이너를 삭제하더라도 데이터가 유지되는지 확인하였다.
+
+### 13-2. Volume 생성
+
+```bash
+docker volume create my-data
+docker volume ls
+```
+
+실행 결과:
+- Volume 이름: my-data
+- Driver: local
+- Volume 생성 및 목록 확인 성공
+
+### 13-3. Volume에 데이터 저장
+
+```bash
+docker run -it --name volume-test -v my-data:/data ubuntu bash
+```
+
+컨테이너 내부에서 다음 명령어를 실행하였다.
+
+```bash
+echo "Docker Volume persistence test" > /data/test.txt
+cat /data/test.txt
+```
+
+실행 결과:
+- `/data/test.txt` 파일 생성
+- 테스트 문구 저장 및 출력 확인
+
+### 13-4. 컨테이너 삭제 후 데이터 유지 확인
+
+기존 컨테이너 종료 및 삭제:
+
+```bash
+exit
+docker rm volume-test
+```
+
+새 컨테이너에서 기존 Volume 연결:
+
+```bash
+docker run --rm -it -v my-data:/data ubuntu bash
+```
+
+데이터 확인:
+
+```bash
+cat /data/test.txt
+```
+
+실행 결과:
+
+```text
+Docker Volume persistence test
+```
+
+기존 컨테이너를 삭제한 후에도 Volume에 저장된 데이터가 유지되는 것을 확인하였다.
+
+### 13-5. 실습 증거 자료
+
+![Docker Volume 생성](docs/screenshots/docker-12-volume-create.png)
+
+![Docker Volume 데이터 저장](docs/screenshots/docker-13-volume-write.png)
+
+![컨테이너 삭제 후 데이터 유지 확인](docs/screenshots/docker-14-volume-persistence.png)
+
+## 14. Docker 실습 결과 및 학습 내용
+
+| 구분 | 학습 내용 |
+|---|---|
+| Dockerfile | 사용자 정의 이미지 구성 방법 |
+| Docker Build | Dockerfile을 이용한 이미지 생성 |
+| Docker Run | 컨테이너 생성 및 실행 |
+| Port Mapping | 호스트와 컨테이너의 포트 연결 |
+| Docker Logs | 컨테이너 실행 로그 확인 |
+| Docker Stats | CPU 및 메모리 사용량 확인 |
+| Bind Mount | 호스트 파일과 컨테이너 파일 연결 |
+| Docker Volume | 컨테이너와 독립적인 데이터 저장 |
+
+### 학습 결과
+
+Dockerfile을 직접 작성하여 사용자 정의 웹 서버 이미지를 생성하고 컨테이너를 실행하였다. 포트 매핑을 통해 브라우저에서 웹페이지 접속을 확인하였으며, Docker 로그와 자원 사용량을 확인하는 방법을 익혔다.
+
+또한 Bind Mount를 이용하여 호스트 파일의 변경 사항이 컨테이너에 반영되는 과정을 확인하였다.
+
+Docker Volume 실습에서는 컨테이너를 삭제한 후에도 저장된 데이터가 유지되는 것을 검증하였다.
+
+이를 통해 Docker 이미지, 컨테이너, 포트 매핑, Bind Mount, Volume의 기본 개념과 활용 방법을 학습하였다.
