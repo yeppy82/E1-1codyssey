@@ -29,6 +29,45 @@ Codyssey 1-1 과제를 위한 Docker 기반 웹 서버 및 개발 환경 실습 
 3. 저장소 클론
 
 4. Git 사용자 정보 설정
+### Git 사용자 설정 및 원격 저장소 연결 확인
+
+Git 사용자 정보와 GitHub 원격 저장소 연결 상태를 확인하였다.
+
+**1) Git 설정 확인**
+
+```bash
+git config --list
+```
+
+실행 결과:
+
+```text
+user.name=yeppy82
+user.email=yeppy82@gmail.com
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.whitespace=cr-at-eol
+remote.origin.url=https://github.com/yeppy82/E1-1codyssey.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.main.remote=origin
+```
+
+**2) 원격 저장소 연결 확인**
+
+```bash
+git remote -v
+```
+
+실행 결과:
+
+```text
+origin  https://github.com/yeppy82/E1-1codyssey.git (fetch)
+origin  https://github.com/yeppy82/E1-1codyssey.git (push)
+```
+
+**확인 결과:** Git 사용자 정보가 설정되어 있으며, GitHub 저장소가 origin이라는 원격 저장소로 등록되어 있다. Fetch와 Push 주소가 동일한 저장소를 가리키므로 원격 저장소와의 연동이 정상적으로 구성되었음을 확인하였다.
 
 ## 📁 폴더 구조
 
@@ -786,6 +825,43 @@ docker build -t my-web-server .
 
 ### 11-6. 컨테이너 실행 및 포트 매핑
 
+### Docker 네트워크 네임스페이스와 포트 포워딩
+
+Docker 컨테이너는 기본적으로 호스트와 분리된 네트워크 네임스페이스를 사용한다. 네트워크 네임스페이스는 컨테이너마다 독립적인 네트워크 환경을 제공하며, 컨테이너는 자체 네트워크 인터페이스와 IP 주소를 사용한다.
+
+따라서 컨테이너 내부에서 실행되는 웹 서버에 호스트 외부에서 접근하려면 포트 포워딩 설정이 필요하다.
+
+**포트 매핑 실행 명령**
+
+```bash
+docker run -d -p 8080:80 --name my-web my-web-server
+```
+
+| 구분 | 포트 | 설명 |
+|---|---:|---|
+| 호스트 포트 | 8080 | 호스트에서 접속하는 포트 |
+| 컨테이너 포트 | 80 | Nginx 웹 서버가 사용하는 포트 |
+
+**네트워크 연결 흐름**
+
+```text
+사용자 브라우저
+      ↓
+http://localhost:8080
+      ↓
+호스트의 8080번 포트
+      ↓ 포트 포워딩
+Docker 컨테이너의 80번 포트
+      ↓
+Nginx 웹 서버
+      ↓
+index.html 응답
+```
+
+Dockerfile의 `EXPOSE 80`은 컨테이너가 사용할 포트를 문서화하는 설정이며, 호스트에 포트를 자동으로 공개하지는 않는다. 실제 호스트와 컨테이너의 포트 연결은 `docker run` 명령의 `-p` 옵션으로 설정한다.
+
+이번 실습에서는 호스트의 8080번 포트를 컨테이너의 80번 포트에 연결하여 브라우저에서 웹 서버에 접속할 수 있음을 확인하였다.
+
 ```bash
 
 docker run -d -p 8080:80 --name my-web my-web-server
@@ -847,6 +923,60 @@ docker stats --no-stream my-web
 ![Docker 자원 사용량 확인](docs/screenshots/docker-09-stats.png)
 
 ## 12. Bind Mount 실습
+### 절대경로와 상대경로의 차이 및 사용 기준
+
+Linux에서 파일이나 디렉터리의 위치를 지정하는 방법에는 절대경로와 상대경로가 있다.
+
+**1) 절대경로(Absolute Path)**
+
+루트 디렉터리(`/`)부터 시작하여 파일이나 디렉터리의 전체 위치를 표시하는 방식이다.
+
+예시:
+
+```bash
+/home/yeppy829155/E1-1codyssey/src/docker-web/index.html
+```
+
+현재 작업 디렉터리가 어디인지와 관계없이 동일한 파일을 지정할 수 있다.
+
+**2) 상대경로(Relative Path)**
+
+현재 작업 중인 디렉터리를 기준으로 파일이나 디렉터리의 위치를 표시하는 방식이다.
+
+프로젝트 루트 디렉터리(`/home/yeppy829155/E1-1codyssey`)에서 실행하는 경우:
+
+```bash
+src/docker-web/index.html
+```
+
+현재 위치를 기준으로 경로가 결정되므로 프로젝트 내부에서 파일을 관리할 때 편리하다.
+
+**3) 경로 선택 기준**
+
+| 구분 | 절대경로 | 상대경로 |
+|---|---|---|
+| 기준 | 루트 디렉터리(`/`) | 현재 작업 디렉터리 |
+| 특징 | 위치가 명확함 | 경로가 짧고 간결함 |
+| 장점 | 실행 위치가 달라도 동일한 경로 사용 | 프로젝트 구조를 유지하며 작업하기 편리함 |
+| 주의점 | 사용자 계정이나 설치 위치가 달라지면 경로 수정 필요 | 현재 작업 위치에 따라 경로가 달라짐 |
+
+**4) Docker Bind Mount 실습에서의 활용**
+
+이번 프로젝트에서는 호스트의 `index.html` 파일을 Docker 컨테이너 내부의 Nginx 웹 서버 경로에 연결하였다.
+
+```bash
+cd ~/E1-1codyssey/src/docker-web
+
+docker run -d -p 8080:80 --name my-web \
+  -v "$(pwd)/index.html:/usr/share/nginx/html/index.html" \
+  nginx:latest
+```
+
+여기서 `$(pwd)`는 현재 작업 디렉터리의 절대경로를 반환하는 명령이다.
+
+따라서 `$(pwd)/index.html`은 호스트에 있는 파일의 절대경로가 되며, 콜론(`:`) 뒤의 `/usr/share/nginx/html/index.html`은 컨테이너 내부의 파일 경로이다.
+
+이처럼 상대경로를 이용해 프로젝트 디렉터리로 이동한 뒤 `$(pwd)`로 호스트의 절대경로를 생성하면, 경로를 직접 입력하는 번거로움을 줄이면서 Bind Mount를 설정할 수 있다.
 
 ### 12-1. 실습 목적
 
@@ -1015,3 +1145,87 @@ Dockerfile을 직접 작성하여 사용자 정의 웹 서버 이미지를 생�
 Docker Volume 실습에서는 컨테이너를 삭제한 후에도 저장된 데이터가 유지되는 것을 검증하였다.
 
 이를 통해 Docker 이미지, 컨테이너, 포트 매핑, Bind Mount, Volume의 기본 개념과 활용 방법을 학습하였다.
+### Docker 포트 충돌 진단 및 해결 방법
+
+Docker 컨테이너 실행 시 호스트에서 사용하려는 포트가 다른 프로그램이나 컨테이너에 의해 이미 사용 중이면 포트 바인딩 오류가 발생할 수 있다.
+
+예를 들어 호스트의 8080번 포트를 컨테이너의 80번 포트에 연결하려 할 때, 8080번 포트가 이미 사용 중이면 컨테이너가 정상적으로 실행되지 않을 수 있다.
+
+**1) 포트 사용 여부 확인**
+
+```bash
+sudo ss -ltnp | grep ':8080'
+```
+
+- `ss`: 네트워크 소켓 상태 확인
+- `-l`: 대기 중인 소켓 확인
+- `-t`: TCP 연결만 확인
+- `-n`: 포트 번호를 숫자로 표시
+- `-p`: 포트를 사용하는 프로세스 정보 표시
+
+출력 결과가 있다면 해당 포트를 사용 중인 프로세스가 있다는 의미이다. 결과가 없다면 해당 조건에 맞는 TCP 대기 포트가 확인되지 않은 것이다.
+
+**2) 포트를 사용하는 프로세스 확인**
+
+```bash
+sudo lsof -i :8080
+```
+
+프로세스 이름과 PID(Process ID)를 확인하여 어떤 프로그램이 포트를 사용하고 있는지 파악한다.
+
+`lsof` 명령어가 설치되어 있지 않다면 다음 명령어로 설치할 수 있다.
+
+```bash
+sudo apt update
+sudo apt install lsof
+```
+
+**3) Docker 컨테이너가 포트를 사용하는지 확인**
+
+```bash
+docker ps
+```
+
+실행 중인 컨테이너의 PORTS 항목에서 `0.0.0.0:8080->80/tcp`와 같은 포트 연결 정보를 확인한다.
+
+**4) Docker 컨테이너가 포트를 사용 중인 경우**
+
+해당 컨테이너를 확인한 후 정상적으로 중지한다.
+
+```bash
+docker stop 컨테이너이름
+```
+
+**5) 일반 프로세스가 포트를 사용하는 경우**
+
+프로세스 이름과 PID를 확인한 뒤 해당 프로그램을 정상 종료한다.
+
+```bash
+kill PID번호
+```
+
+정상 종료되지 않을 경우에만 프로세스의 용도와 안전성을 확인한 뒤 강제 종료를 검토한다.
+
+```bash
+kill -9 PID번호
+```
+
+**6) 다른 포트 번호 사용**
+
+기존 포트를 해제하기 어려운 경우 호스트 포트를 변경하여 실행할 수 있다.
+
+```bash
+docker run -d -p 8081:80 --name my-web my-web-server
+```
+
+이 경우 브라우저에서 다음 주소로 접속한다.
+
+```text
+http://localhost:8081
+```
+
+**진단 및 해결 순서**
+
+포트 사용 여부 확인 → 사용 프로세스 확인 → Docker 컨테이너 여부 확인 → 원인에 맞게 종료 또는 포트 변경 → 컨테이너 재실행
+
+**주의사항:** 포트를 사용하는 프로세스를 확인하지 않고 무조건 종료하면 다른 프로그램의 정상 작동에 문제가 생길 수 있으므로, 반드시 사용 주체를 먼저 확인한다.
